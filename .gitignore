@@ -19,7 +19,8 @@ target/
 *.iml
 *.ipr
 *.jar
-dev.properties
+mvnw		
+mvnw.cmd
 staging.properties
 *.crt
 ### NetBeans ###

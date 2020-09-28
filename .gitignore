@@ -19,7 +19,6 @@ target/
 *.iml
 *.ipr
 *.jar
-staging.properties
 *.crt
 ### NetBeans ###
 /nbproject/private/

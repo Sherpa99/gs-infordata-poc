@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: infordata-staging
-          image: de.icr.io/infordata_poc_ir/infordata-dev:v2.2
+          image: de.icr.io/infordata_poc_ir/infordata-gs-poc:v1
           env:
           - name: ORACLE_USERNAME
             valueFrom:

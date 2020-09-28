@@ -1,0 +1,50 @@
+def gv
+pipeline {
+    agent any 
+    environment {
+    // This is the git repository from where we fetch the code to build
+    GIT_URL= "https://github.com/Sherpa99/infordata-poc-app.git"
+    }
+    parameters {
+        choice(name: 'BRANCH_NAME', choices:['DEV','QA','PROD'], description:'')
+        booleanParam(name: 'executeTests', defaultValue: true, description:'')
+    }
+    tools{
+        maven 'mvn'
+    }
+    stages {
+        stage("init") {
+            steps {
+                script {
+                    gv = load "script.groovy"
+                }
+            }
+        }
+        stage('Checkout Source') {
+            steps {
+                script {
+                    gv.checkoutSRC()
+                }
+            }
+        }
+        stage("deploy") {
+             when {
+                expression{
+                    params.BRANCH_NAME=='DEV' || params.BRANCH_NAME=='QA'
+                }
+            }
+            steps {
+                script {
+                    gv.deployApp()
+                }
+            }
+        }
+         stage("expose service") {
+            steps {
+                script {
+                    gv.exposeService()
+                }
+            }
+        }
+    }
+}

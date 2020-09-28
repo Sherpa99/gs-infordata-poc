@@ -1,0 +1,8 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: oracle
+spec:
+  ports:
+    - port: 1521
+      targetPort: 1539

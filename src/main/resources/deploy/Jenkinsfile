@@ -3,7 +3,7 @@ pipeline {
     agent any 
     environment {
     // This is the git repository from where we fetch the code to build
-    GIT_URL= "https://github.com/Sherpa99/infordata-poc-app.git"
+    GIT_URL= "https://github.com/Sherpa99/gs-infordata-poc.git"
     }
     parameters {
         choice(name: 'BRANCH_NAME', choices:['DEV','QA','PROD'], description:'')

@@ -49,10 +49,10 @@ def pushToNexus() {
 }
 def deployApp() {
     echo 'Deployment deploying the application' 
-    sh 'oc create deployment infordata-poc-app --image=us.icr.io/gs-cda-dev-ns/myimage:1'
+    sh 'oc create deployment infordata-poc-app --image=de.icr.io/infordata_poc_ir/infordata-gs-poc:v1'
 }
 def exposeService() {
     echo 'Exposing Service' 
-    sh 'oc expose deployment infordata-poc-app --type="NodePort" --port=3000'
+    sh 'oc expose deployment infordata-poc-app --type="NodePort" --port=8080'
 }
 return this

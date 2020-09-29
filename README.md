@@ -30,6 +30,7 @@ Data Storage/Repository
 
 * Deployment yaml
 ```console
+
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -71,78 +72,9 @@ spec:
       maxSurge: 25%
   revisionHistoryLimit: 10
   progressDeadlineSeconds: 600
-  ```
+
+```
 * Create deployment
 ```console
 oc apply -f deployment.yaml
 ```
-* Create application service
-  ```console
-oc expose deployment infordata-staging --type="NodePort" --port=8080
-  ```
-* Create application route (Load Balancer)
-```console
-oc expose svc/infordata-staging
-```
-
-* DB Secret
-```console
-apiVersion: v1
-kind: Secret
-metadata:
-  name: oracle
-  namespace: dev
-type: Opaque
-data:
-  ORA_USER: <encripted user name>
-  ORA_PASSWORD: <encripted password>
-```
-* Create deployment
-  ```console
-oc apply -f oradb-secret.yaml
-  ```
-* DB Service
-```console
-kind: Service
-apiVersion: v1
-metadata:
-  name: oracle
-spec:
-  ports:
-    - port: 1521
-      targetPort: 1539
-```
-* Create deployment
-  ```console
-oc apply -f svcoradb.yaml
-  ```
-* DB Endpoint
-  ```console
-kind: Endpoints
-apiVersion: v1
-metadata:
-  name: oracle
-subsets:
-  - addresses:
-      - ip: 192.168.0.9
-    ports:
-      - port: 1539
-  ```
- * Create deployment
-  ```console
-oc apply -f eporadb.yaml
-  ```
-
-REST EndPoints fetching data from a table sample oracle database
-
-1) Fetch total record count
-```console
-curl 'infordata-poc-stagig-dev.infordata-poc-cluster-2bef1f4b4097001da9502000c44fc2b2-0000.eu-de.containers.appdomain.cloud/id/customers/count'
-```
-Expected out put: 319
-
-2) Fetch the record by id
-```console
-curl 'infordata-poc-stagig-dev.infordata-poc-cluster-2bef1f4b4097001da9502000c44fc2b2-0000.eu-de.containers.appdomain.cloud/id/county/count'
-```
-Expected output: 25

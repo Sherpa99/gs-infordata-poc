@@ -1,7 +1,7 @@
 def checkoutSRC() {
-    echo 'Checking out source code!' 
-    echo "Building applicaiton version : ${params.BRANCH_NAME}"
-    git "${GIT_URL}"
+	echo 'Checking out source code!'
+	echo "Building applicaiton version : ${params.BRANCH_NAME}"
+	git "${GIT_URL}"
 }
 def buildApp() {
 	echo 'Building the application!'
@@ -23,36 +23,36 @@ def pushToNexus() {
 	if(artifactExists) {
 		echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
 		nexusArtifactUploader(
-			nexusVersion: NEXUS_VERSION,
-			protocol: NEXUS_PROTOCOL,
-			nexusUrl: NEXUS_URL,
-			groupId: pom.groupId,
-			version: pom.version,
-			repository: NEXUS_REPOSITORY,
-			credentialsId: NEXUS_CREDENTIAL_ID,
-			artifacts: [
-				// Artifact generated such as .jar, .ear and .war files.
-				[artifactId: pom.artifactId,
-				classifier: '',
-				file: artifactPath,
-				type: pom.packaging],
-				// Lets upload the pom.xml file for additional information for Transitive dependencies
-				[artifactId: pom.artifactId,
-				classifier: '',
-				file: "pom.xml",
-				type: "pom"]
-			]
-		);
+				nexusVersion: NEXUS_VERSION,
+				protocol: NEXUS_PROTOCOL,
+				nexusUrl: NEXUS_URL,
+				groupId: pom.groupId,
+				version: pom.version,
+				repository: NEXUS_REPOSITORY,
+				credentialsId: NEXUS_CREDENTIAL_ID,
+				artifacts: [
+					// Artifact generated such as .jar, .ear and .war files.
+					[artifactId: pom.artifactId,
+						classifier: '',
+						file: artifactPath,
+						type: pom.packaging],
+					// Lets upload the pom.xml file for additional information for Transitive dependencies
+					[artifactId: pom.artifactId,
+						classifier: '',
+						file: "pom.xml",
+						type: "pom"]
+				]
+				);
 	} else {
 		error "*** File: ${artifactPath}, could not be found";
 	}
 }
 def deployApp() {
-    echo 'Deployment deploying the application' 
-    sh 'oc create deployment infordata-poc-app --image=de.icr.io/infordata_poc_ir/infordata-gs-poc:v1'
+	echo 'Deployment deploying the application'
+	sh 'oc create deployment infordata-poc-app --image=de.icr.io/infordata_poc_ir/infordata-gs-poc:v1'
 }
 def exposeService() {
-    echo 'Exposing Service' 
-    sh 'oc expose deployment infordata-poc-app --type="NodePort" --port=8080'
+	echo 'Exposing Service'
+	sh 'oc expose deployment infordata-poc-app --type="NodePort" --port=8080'
 }
 return this

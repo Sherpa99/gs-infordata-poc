@@ -16,7 +16,7 @@ pipeline {
         stage("init") {
             steps {
                 script {
-                    gv = load "src/main/resources/nexus/script.groovy"
+                    gv = load "script.groovy"
                 }
             }
         }

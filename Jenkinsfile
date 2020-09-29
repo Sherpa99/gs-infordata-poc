@@ -1,10 +1,11 @@
+def gv
 pipeline {
     agent any 
     environment {
     REGISTRY_URL = ""
     DOCKER_IMAGE = ""
     // This is the git repository from where we fetch the code to build
-    GIT_URL= "https://github.com/Sherpa99/infordata-poc-app.git"
+    GIT_URL= "https://github.com/Sherpa99/gs-infordata-poc.git"
     // This can be nexus3 or nexus2
     NEXUS_VERSION = "nexus3"
     // This can be http or https
@@ -24,26 +25,32 @@ pipeline {
         maven 'mvn'
     }
     stages {
-        // stage("init") {
-        //     steps {
-        //         script {
-        //             gv = load "jlib.groovy"
-        //         }
-        //     }
-        // }
+        stage("init") {
+            steps {
+                script {
+                    gv = load "script.groovy"
+                }
+            }
+        }
         stage('Checkout Source') {
             steps {
-                git "${GIT_URL}"
+                script {
+                    gv.checkoutSRC()
                 }
+            }
         }
-        stage("build") {
+        stage("Build Application") {
             steps {
-                    buildApp()
+                script {
+                    gv.buildApp()
                 }
+            }
         }
          stage('publish to nexus') {
              steps{
-                   pushToNexus()
+                 script {
+                   gv.pushToNexus()
+                }
             }
         }
     }

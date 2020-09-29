@@ -21,6 +21,9 @@ pipeline {
         choice(name: 'BRANCH_NAME', choices:['DEV','QA','PROD'], description:'')
         booleanParam(name: 'executeTests', defaultValue: true, description:'')
     }
+    tools{
+        maven 'mvn'
+    }
     stages {
         stage("init") {
             steps {

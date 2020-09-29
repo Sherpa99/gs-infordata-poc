@@ -4,7 +4,7 @@
 ![Screenshot](https://github.com/Sherpa99/gs-infordata-poc/blob/master/docs/images/PipelineWorkFlow.png)
 
 ### Jenksinsfile for pushing artifact to Nexus
-* Deployment yaml
+* Following code build the artifact and pushes to Nexus artifactory.
 ```console
 def checkoutSRC() {
   echo 'Checking out source code!'
@@ -17,19 +17,12 @@ def buildApp() {
   sh 'mvn clean package -DskipTests=true'
 }
 def pushToNexus() {
-  echo 'Publish to nexus!'
-  // Read POM xml file using 'readMavenPom' step , this step 'readMavenPom' is included in: https://plugins.jenkins.io/pipeline-utility-steps
-  pom = readMavenPom file: "pom.xml";
-  // Find built artifact under target folder
+  pom = readMavenPom file: "pom.xml"
   filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
-  // Print some info from the artifact found
   echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
-  // Extract the path from the File found
   artifactPath = filesByGlob[0].path;
-  // Assign to a boolean response verifying If the artifact name exists
   artifactExists = fileExists artifactPath;
   if(artifactExists) {
-    echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
     nexusArtifactUploader(
         nexusVersion: NEXUS_VERSION,
         protocol: NEXUS_PROTOCOL,
@@ -39,12 +32,10 @@ def pushToNexus() {
         repository: NEXUS_REPOSITORY,
         credentialsId: NEXUS_CREDENTIAL_ID,
         artifacts: [
-          // Artifact generated such as .jar, .ear and .war files.
           [artifactId: pom.artifactId,
             classifier: '',
             file: artifactPath,
             type: pom.packaging],
-          // Lets upload the pom.xml file for additional information for Transitive dependencies
           [artifactId: pom.artifactId,
             classifier: '',
             file: "pom.xml",
@@ -68,7 +59,7 @@ return this
 ```
 
 ### Jenksinsfile for deploying application to OCP - OpenShift Container Platform
-* Deployment yaml
+* Following code deploys application into a OCP - OpenShift Container Platform cluster
 ```console
 def gv
 pipeline {
@@ -124,7 +115,7 @@ pipeline {
 
 
 ### Groovy Script file
-* Deployment yaml
+* Following is the groovy code which called into jenkinsfile to carryout each activities.
 ```console
 def checkoutSRC() {
   echo 'Checking out source code!'
@@ -187,7 +178,7 @@ return this
 
 ```
 
-### BlueOcean deployment steps
+### BlueOcean deployment result
 ![Screenshot](https://github.com/Sherpa99/gs-infordata-poc/blob/master/docs/images/blueoceanpipeline.png)
 
 ## Spring Boot Application  <a href=https://github.com/Sherpa99/gs-infordata-poc/blob/master/README.md> Link </a>

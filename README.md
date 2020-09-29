@@ -26,7 +26,19 @@ Data Storage/Repository
 * ICR Image repository
 * Github
 
-### YAML Codes for creating different objects:
+* Oracle Database Connection String
+```console
+spring.datasource.url=jdbc:oracle:thin:@//${ORACLE_SERVICE_HOST}:${ORACLE_SERVICE_PORT}/xepdb1
+spring.datasource.username=${ORACLE_USERNAME}
+spring.datasource.password=${ORACLE_PASSWORD}
+spring.datasource.driver-class-name=oracle.jdbc.driver.OracleDriver
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.Oracle10gDialect
+spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults=false
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=none
+```
+
+### YAML Codes for creating K8S different objects:
 
 * Deployment yaml
 ```console

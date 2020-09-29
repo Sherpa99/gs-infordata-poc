@@ -1,148 +1,193 @@
 # Spring Boot Application Using Postgres
 
-## Applicaiton workflow
-![Screenshot](https://github.com/Sherpa99/gs-infordata-poc/blob/master/docs/images/WorkFlowDiagram.png)
-### Spring_Boot Base RESTApi build based on lasted feature as mentioned
-* SpringBoot Version : 2.3.0.RELEASE
-* Java Version: 1.8
-* Spring Boot Pagination & Filter giving faster response time
-* JPA Repository
-  * No-Code Repositories
-  * Reduced boilerplate code
-  * Generated Queries
+## Jenkins Pipeline Workflow
+![Screenshot](https://github.com/Sherpa99/gs-infordata-poc/blob/master/docs/images/PipelineWorkFlow.png)
 
-Infrastrucure:
-* IBM VPC Base Oracle Database hosted in VSI
-* Application is hosted in OCP - OpenShift Container Platform based in Frankfort
-
-Tools used
-* Docker 
-* Kubernetes
-* Eclipse
-* VS Code
-
-Data Storage/Repository
-* Oracle Database 
-* ICR Image repository
-* Github
-
-### YAML Codes for creating different objects:
-
+### Jenksinsfile for pushing artifact to Nexus
 * Deployment yaml
 ```console
-kind: Deployment
-apiVersion: apps/v1
-metadata:
-  name: infordata-poc-stagig
-  namespace: dev
-  labels:
-    app: infordata-poc-staging
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: infordata-poc-staging
-  template:
-    metadata:
-      labels:
-        app: infordata-poc-staging
-    spec:
-      containers:
-        - name: infordata-staging
-          image: de.icr.io/infordata_poc_ir/infordata-gs-poc:v1
-          env:
-          - name: ORACLE_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: oracle
-                key: ORA_USER
-          - name: ORACLE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: oracle
-                key: ORA_PASSWORD
-      restartPolicy: Always
-      terminationGracePeriodSeconds: 30
-      dnsPolicy: ClusterFirst
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 25%
-      maxSurge: 25%
-  revisionHistoryLimit: 10
-  progressDeadlineSeconds: 600
-  ```
-* Create deployment
-```console
-oc apply -f deployment.yaml
-```
-* Create application service
-  ```console
-oc expose deployment infordata-staging --type="NodePort" --port=8080
-  ```
-* Create application route (Load Balancer)
-```console
-oc expose svc/infordata-staging
+def checkoutSRC() {
+  echo 'Checking out source code!'
+  echo "Building applicaiton version : ${params.BRANCH_NAME}"
+  git "${GIT_URL}"
+}
+def buildApp() {
+  echo 'Building the application!'
+  echo "Building applicaiton version : ${params.BRANCH_NAME}"
+  sh 'mvn clean package -DskipTests=true'
+}
+def pushToNexus() {
+  echo 'Publish to nexus!'
+  // Read POM xml file using 'readMavenPom' step , this step 'readMavenPom' is included in: https://plugins.jenkins.io/pipeline-utility-steps
+  pom = readMavenPom file: "pom.xml";
+  // Find built artifact under target folder
+  filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
+  // Print some info from the artifact found
+  echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
+  // Extract the path from the File found
+  artifactPath = filesByGlob[0].path;
+  // Assign to a boolean response verifying If the artifact name exists
+  artifactExists = fileExists artifactPath;
+  if(artifactExists) {
+    echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
+    nexusArtifactUploader(
+        nexusVersion: NEXUS_VERSION,
+        protocol: NEXUS_PROTOCOL,
+        nexusUrl: NEXUS_URL,
+        groupId: pom.groupId,
+        version: pom.version,
+        repository: NEXUS_REPOSITORY,
+        credentialsId: NEXUS_CREDENTIAL_ID,
+        artifacts: [
+          // Artifact generated such as .jar, .ear and .war files.
+          [artifactId: pom.artifactId,
+            classifier: '',
+            file: artifactPath,
+            type: pom.packaging],
+          // Lets upload the pom.xml file for additional information for Transitive dependencies
+          [artifactId: pom.artifactId,
+            classifier: '',
+            file: "pom.xml",
+            type: "pom"]
+        ]
+        );
+  } else {
+    error "*** File: ${artifactPath}, could not be found";
+  }
+}
+def deployApp() {
+  echo 'Deployment deploying the application'
+  sh 'oc create deployment infordata-poc-app --image=de.icr.io/infordata_poc_ir/infordata-gs-poc:v1'
+}
+def exposeService() {
+  echo 'Exposing Service'
+  sh 'oc expose deployment infordata-poc-app --type="NodePort" --port=8080'
+}
+return this
+
 ```
 
-* DB Secret
+### Jenksinsfile for deploying application to OCP - OpenShift Container Platform
+* Deployment yaml
 ```console
-apiVersion: v1
-kind: Secret
-metadata:
-  name: oracle
-  namespace: dev
-type: Opaque
-data:
-  ORA_USER: <encripted user name>
-  ORA_PASSWORD: <encripted password>
+def gv
+pipeline {
+    agent any 
+    environment {
+    // This is the git repository from where we fetch the code to build
+    GIT_URL= "https://github.com/Sherpa99/gs-infordata-poc.git"
+    }
+    parameters {
+        choice(name: 'BRANCH_NAME', choices:['DEV','QA','PROD'], description:'')
+        booleanParam(name: 'executeTests', defaultValue: true, description:'')
+    }
+    tools{
+        maven 'mvn'
+    }
+    stages {
+        stage("init") {
+            steps {
+                script {
+                    gv = load "script.groovy"
+                }
+            }
+        }
+        stage('Checkout Source') {
+            steps {
+                script {
+                    gv.checkoutSRC()
+                }
+            }
+        }
+        stage("deploy") {
+             when {
+                expression{
+                    params.BRANCH_NAME=='DEV' || params.BRANCH_NAME=='QA'
+                }
+            }
+            steps {
+                script {
+                    gv.deployApp()
+                }
+            }
+        }
+         stage("expose service") {
+            steps {
+                script {
+                    gv.exposeService()
+                }
+            }
+        }
+    }
+}
 ```
-* Create deployment
-  ```console
-oc apply -f oradb-secret.yaml
-  ```
-* DB Service
-```console
-kind: Service
-apiVersion: v1
-metadata:
-  name: oracle
-spec:
-  ports:
-    - port: 1521
-      targetPort: 1539
-```
-* Create deployment
-  ```console
-oc apply -f svcoradb.yaml
-  ```
-* DB Endpoint
-  ```console
-kind: Endpoints
-apiVersion: v1
-metadata:
-  name: oracle
-subsets:
-  - addresses:
-      - ip: 192.168.0.9
-    ports:
-      - port: 1539
-  ```
- * Create deployment
-  ```console
-oc apply -f eporadb.yaml
-  ```
 
-REST EndPoints fetching data from a table sample oracle database
 
-1) Fetch total record count
+### Groovy Script file
+* Deployment yaml
 ```console
-curl 'infordata-poc-stagig-dev.infordata-poc-cluster-2bef1f4b4097001da9502000c44fc2b2-0000.eu-de.containers.appdomain.cloud/id/customers/count'
-```
-Expected out put: 319
+def checkoutSRC() {
+  echo 'Checking out source code!'
+  echo "Building applicaiton version : ${params.BRANCH_NAME}"
+  git "${GIT_URL}"
+}
+def buildApp() {
+  echo 'Building the application!'
+  echo "Building applicaiton version : ${params.BRANCH_NAME}"
+  sh 'mvn clean package -DskipTests=true'
+}
+def pushToNexus() {
+  echo 'Publish to nexus!'
+  // Read POM xml file using 'readMavenPom' step , this step 'readMavenPom' is included in: https://plugins.jenkins.io/pipeline-utility-steps
+  pom = readMavenPom file: "pom.xml";
+  // Find built artifact under target folder
+  filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
+  // Print some info from the artifact found
+  echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
+  // Extract the path from the File found
+  artifactPath = filesByGlob[0].path;
+  // Assign to a boolean response verifying If the artifact name exists
+  artifactExists = fileExists artifactPath;
+  if(artifactExists) {
+    echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
+    nexusArtifactUploader(
+        nexusVersion: NEXUS_VERSION,
+        protocol: NEXUS_PROTOCOL,
+        nexusUrl: NEXUS_URL,
+        groupId: pom.groupId,
+        version: pom.version,
+        repository: NEXUS_REPOSITORY,
+        credentialsId: NEXUS_CREDENTIAL_ID,
+        artifacts: [
+          // Artifact generated such as .jar, .ear and .war files.
+          [artifactId: pom.artifactId,
+            classifier: '',
+            file: artifactPath,
+            type: pom.packaging],
+          // Lets upload the pom.xml file for additional information for Transitive dependencies
+          [artifactId: pom.artifactId,
+            classifier: '',
+            file: "pom.xml",
+            type: "pom"]
+        ]
+        );
+  } else {
+    error "*** File: ${artifactPath}, could not be found";
+  }
+}
+def deployApp() {
+  echo 'Deployment deploying the application'
+  sh 'oc create deployment infordata-poc-app --image=de.icr.io/infordata_poc_ir/infordata-gs-poc:v1'
+}
+def exposeService() {
+  echo 'Exposing Service'
+  sh 'oc expose deployment infordata-poc-app --type="NodePort" --port=8080'
+}
+return this
 
-2) Fetch the record by id
-```console
-curl 'infordata-poc-stagig-dev.infordata-poc-cluster-2bef1f4b4097001da9502000c44fc2b2-0000.eu-de.containers.appdomain.cloud/id/county/count'
 ```
-Expected output: 25
+
+### BlueOcean deployment steps
+![Screenshot](https://github.com/Sherpa99/gs-infordata-poc/blob/master/docs/images/blueoceanpipeline.png)
+
+## Spring Boot Application  <a href=https://github.com/Sherpa99/gs-infordata-poc/blob/master/README.md> Link </a>

@@ -1,7 +1,7 @@
 # Infor-Data POC Spring Boot Application using oracle 18c Database
 
 ## Applicaiton workflow
-![Screenshot](https://github.com/Sherpa99/gs-infordata-poc/blob/master/docs/images/WorkFlowDiagram.png)
+![Screenshot](https://github.com/Sherpa99/gs-infordata-poc/blob/master/docs/images/AppWorkFlow.png)
 ### Spring_Boot Base RESTApi build based on lasted feature as mentioned
 * SpringBoot Version : 2.3.0.RELEASE
 * Java Version: 1.8
@@ -145,14 +145,16 @@ oc apply -f eporadb.yaml
 
 ### REST EndPoints fetching data from a table sample oracle database
 
-1) Fetch total record count
+1) Fetch total customers record count
 ```console
 curl 'infordata-poc-stagig-dev.infordata-poc-cluster-2bef1f4b4097001da9502000c44fc2b2-0000.eu-de.containers.appdomain.cloud/id/customers/count'
 ```
 Expected out put: 319
 
-2) Fetch the record by id
+2) Fetch total country record
 ```console
 curl 'infordata-poc-stagig-dev.infordata-poc-cluster-2bef1f4b4097001da9502000c44fc2b2-0000.eu-de.containers.appdomain.cloud/id/county/count'
 ```
 Expected output: 25
+
+## Jenkins Pipeline <a href=https://github.com/Sherpa99/gs-infordata-poc/blob/master/docs/jenkins-pipleline.md> Link </a>

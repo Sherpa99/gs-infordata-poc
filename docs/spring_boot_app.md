@@ -1,7 +1,7 @@
 # Spring Boot Application Using Postgres
 
 ## Applicaiton workflow
-![Screenshot](https://github.com/Sherpa99/gs-infordata-poc/blob/master/docs/images/%20WorkFlowDiagram.png)
+![Screenshot](https://github.com/Sherpa99/gs-infordata-poc/blob/master/docs/images/WorkFlowDiagram.png)
 ### Spring_Boot Base RESTApi build based on lasted feature as mentioned
 * SpringBoot Version : 2.3.0.RELEASE
 * Java Version: 1.8

@@ -5,28 +5,25 @@
 ### Spring_Boot Base RESTApi build based on lasted feature as mentioned
 * SpringBoot Version : 2.3.0.RELEASE
 * Java Version: 1.8
-* Spring Boot Pagination & Filter giving faster response time
 * JPA Repository
   * No-Code Repositories
   * Reduced boilerplate code
   * Generated Queries
 
-Infrastrucure:
-* IBM VPC Base Oracle Database hosted in VSI
-* Application is hosted in OCP - OpenShift Container Platform based in Frankfort
+### Infrastrucure:
+* IBM Virtual Private Cloud
+* Database hosted in us-south in VSI - Vitual Server Instance based in Dallas
+* Application hosted in eu-de region on OCP - OpenShift Container Platform based in Frankfort
 
-Tools used
-* Docker 
-* Kubernetes
-* Eclipse
-* VS Code
-
-Data Storage/Repository
+### Data Storage/Repository
 * Oracle Database 
 * ICR Image repository
 * Github
 
-* Oracle Database Connection String
+
+### Oracle Database 
+
+* Oracle JDBC Connection String
 ```console
 spring.datasource.url=jdbc:oracle:thin:@//${ORACLE_SERVICE_HOST}:${ORACLE_SERVICE_PORT}/xepdb1
 spring.datasource.username=${ORACLE_USERNAME}
@@ -145,7 +142,8 @@ subsets:
 ```console
 oc apply -f eporadb.yaml
 ```
-REST EndPoints fetching data from a table sample oracle database
+
+### REST EndPoints fetching data from a table sample oracle database
 
 1) Fetch total record count
 ```console

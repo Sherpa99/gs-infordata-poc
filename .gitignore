@@ -6,13 +6,12 @@ target/
 
 ### STS ###
 .apt_generated
+.classpath
 .factorypath
+.project
 .settings
 .springBeans
 .sts4-cache
-.DS_Store
-.classpath
-.project
 ### IntelliJ IDEA ###
 .idea
 *.iws

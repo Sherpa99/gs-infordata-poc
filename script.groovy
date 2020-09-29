@@ -6,7 +6,7 @@ def checkoutSRC() {
 def buildApp() {
 	echo 'Building the application!'
 	echo "Building applicaiton version : ${params.BRANCH_NAME}"
-	sh 'mvn package -DskipTests=true'
+	sh 'mvn clean package -DskipTests=true'
 }
 def pushToNexus() {
 	echo 'Publish to nexus!'

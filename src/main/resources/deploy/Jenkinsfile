@@ -1,3 +1,4 @@
+@Grab('com.oracle:ojdbc8:18.4.0.0')
 def gv
 pipeline {
     agent any 

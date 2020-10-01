@@ -43,7 +43,7 @@ pipeline {
         stage("Deploy an Application") {
              when {
                 expression{
-                    params.BRANCH_NAME=='DEV' || params.BRANCH_NAME=='QA'
+                    params.BRANCH_NAME == 'DEV' || params.BRANCH_NAME == 'QA'
                 }
             }
             steps {

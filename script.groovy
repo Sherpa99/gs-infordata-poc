@@ -54,11 +54,11 @@ def deployApp() {
 }
 def exposeService() {
 	echo 'Exposing Service'
-	sh 'oc expose deployment infordata-poc-qa --type="NodePort" --port=8080'
+	sh 'oc expose deployment infordata-poc --type="NodePort" --port=8080'
 }
 def createRoute() {
 	echo 'Create OCP Route - Load Balancer'
-	sh 'oc expose svc/infordata-poc-qa'
+	sh 'oc expose svc/infordata-poc'
 }
 def createExtSVC() {
 	echo 'Creating OCP Routes - Load Balancer'

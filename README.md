@@ -36,8 +36,26 @@ spring.jpa.hibernate.ddl-auto=none
 ```
 
 ### YAML Codes for creating K8S different objects:
+Note: Create YAML  files for each object below and it as described or name of your choice with .yaml or yml extension.
 
-* Deployment yaml
+1) DB Secret
+```console
+apiVersion: v1
+kind: Secret
+metadata:
+  name: oracle
+  namespace: dev
+type: Opaque
+data:
+  ORA_USER: <encripted user name>
+  ORA_PASSWORD: <encripted password>
+```
+* Create Database secret
+```console
+oc apply -f oradb-secret.yaml
+```
+
+2) Deployment yaml
 ```console
 
 kind: Deployment
@@ -87,31 +105,56 @@ spec:
 ```console
 oc apply -f deployment.yaml
 ```
+3) Service
+```console
+kind: Service
+apiVersion: v1
+metadata:
+  name: infordata-poc
+  labels:
+    app: infordata
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 32177
+  selector:
+    app: infordata
+  type: NodePort
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster
+status:
+  loadBalancer: {}
+```
 * Create application service
 ```console
-oc expose deployment infordata-staging --type="NodePort" --port=8080
+oc apply -f svcapp.yaml
+```
+4) Rounte - Load balancer
+```console
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: infordata-poc
+  labels:
+    app: infordata
+  annotations:
+    openshift.io/host.generated: 'true'
+spec:
+  to:
+    kind: Service
+    name: infordata-poc
+    weight: 100
+  port:
+    targetPort: 8080
+  wildcardPolicy: None
 ```
 * Create application route (Load Balancer)
 ```console
-oc expose svc/infordata-staging
+oc apply -f routeapp.yaml
 ```
-* DB Secret
-```console
-apiVersion: v1
-kind: Secret
-metadata:
-  name: oracle
-  namespace: dev
-type: Opaque
-data:
-  ORA_USER: <encripted user name>
-  ORA_PASSWORD: <encripted password>
-```
-* Create deployment
-```console
-oc apply -f oradb-secret.yaml
-```
-* DB Service
+5) DB External Service
 ```console
 kind: Service
 apiVersion: v1
@@ -122,11 +165,11 @@ spec:
     - port: 1521
       targetPort: 1539
 ```
-* Create deployment
+* Create External Service
 ```console
 oc apply -f svcoradb.yaml
 ```
-* DB Endpoint
+6) DB External Endpoint
 ```console
 kind: Endpoints
 apiVersion: v1

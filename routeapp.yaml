@@ -7,8 +7,6 @@ metadata:
   annotations:
     openshift.io/host.generated: 'true'
 spec:
-  host: >-
-    infordata-poc-stagig-dev.infordata-cluster-2bef1f4b4097001da9502000c44fc2b2-0000.eu-de.containers.appdomain.cloud
   to:
     kind: Service
     name: infordata-poc

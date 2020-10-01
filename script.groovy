@@ -47,12 +47,29 @@ def pushToNexus() {
 		error "*** File: ${artifactPath}, could not be found";
 	}
 }
+
 def deployApp() {
-	echo 'Deployment deploying the application'
-	sh 'oc create deployment infordata-poc-app --image=de.icr.io/infordata_poc_ir/infordata-gs-poc:v1'
+	echo 'Deploy an application'
+	sh 'oc apply -f deployment.yaml'
 }
 def exposeService() {
 	echo 'Exposing Service'
-	sh 'oc expose deployment infordata-poc-app --type="NodePort" --port=8080'
+	sh 'oc expose deployment infordata-poc-qa --type="NodePort" --port=8080'
+}
+def createRoute() {
+	echo 'Create OCP Route - Load Balancer'
+	sh 'oc expose svc/infordata-poc-qa'
+}
+def createExtSVC() {
+	echo 'Creating OCP Routes - Load Balancer'
+	sh 'oc apply -f svcoradb.yaml'
+}
+def createExtEP() {
+	echo 'Create External Endpoint'
+	sh 'oc apply -f eporadb.yaml'
+}
+def getRounte() {
+	echo 'Getting Routes for accessing service'
+	sh 'oc get route'
 }
 return this

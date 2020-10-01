@@ -40,53 +40,6 @@ pipeline {
                 }
             }
         }
-        stage("build") {
-            steps {
-                script {
-                    gv.buildApp()
-                }
-            }
-        }
-         stage('publish to nexus') {
-             steps{
-                 script {
-                   gv.pushToNexus()
-                }
-            }
-        }
-        stage("test") {
-            when {
-                expression{
-                    params.executeTests
-                }
-            }
-            steps {
-                script {
-                    gv.testApp()
-                }
-            }
-        }
-        stage("sonarqube") {
-            steps {
-                script {
-                    gv.scanApp()
-                }
-            }
-        }
-        stage('Build image') {
-            steps{
-                script {
-                gv.buildImage()
-               }
-            }
-         }
-        stage('Push Image') {
-             steps{
-                 script {
-                   gv.pushImage()
-                }
-            }
-        }
         stage("deploy") {
              when {
                 expression{
@@ -96,6 +49,41 @@ pipeline {
             steps {
                 script {
                     gv.deployApp()
+                }
+            }
+        }
+        stage("Create Internal Service") {
+            steps {
+                script {
+                    gv.exposeService()
+                }
+            }
+        }
+        stage("create Load Balancer") {
+            steps {
+                script {
+                    gv.createRoute()
+                }
+            }
+        }
+        stage("Create Ext Service") {
+            steps {
+                script {
+                    gv.createExtSVC()
+                }
+            }
+        }
+        stage("Create Ext EndPoint") {
+            steps {
+                script {
+                    gv.createExtEP()
+                }
+            }
+        }
+        stage("Get Route") {
+            steps {
+                script {
+                    gv.createExtEP()
                 }
             }
         }

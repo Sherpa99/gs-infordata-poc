@@ -20,7 +20,7 @@ pipeline {
     }
     parameters {
         choice(name: 'BRANCH_NAME', choices:['DEV','QA','PROD'], description:'Select Your Options')
-        booleanParam(name: 'executeTests', defaultValue: true, description:'Un select to make it false')
+        booleanParam(name: 'executeTests', defaultValue: true, description:'Unselect the box to make it false')
     }
     tools{
         maven 'mvn'

@@ -36,7 +36,7 @@ spring.jpa.hibernate.ddl-auto=none
 ```
 
 ### YAML Codes for creating K8S different objects:
-Note: Create YAML  files for each object below and it as described or name of your choice with .yaml or yml extension.
+Note: Create YAML  files for each object below and name it as described or name of your choice with .yaml or yml extension.
 
 1) DB Secret
 ```console
@@ -131,7 +131,7 @@ status:
 ```console
 oc apply -f svcapp.yaml
 ```
-4) Rounte - Load balancer
+4) Route - Load balancer
 ```console
 kind: Route
 apiVersion: route.openshift.io/v1

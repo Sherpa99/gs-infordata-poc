@@ -19,8 +19,8 @@ pipeline {
     NEXUS_CREDENTIAL_ID = "nexus-credentials"
     }
     parameters {
-        choice(name: 'BRANCH_NAME', choices:['DEV','QA','PROD'], description:'')
-        booleanParam(name: 'executeTests', defaultValue: true, description:'')
+        choice(name: 'BRANCH_NAME', choices:['DEV','QA','PROD'], description:'Select Your Options')
+        booleanParam(name: 'executeTests', defaultValue: true, description:'Un select to make it false')
     }
     tools{
         maven 'mvn'

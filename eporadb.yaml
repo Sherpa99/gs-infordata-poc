@@ -2,7 +2,6 @@ kind: Endpoints
 apiVersion: v1
 metadata:
   name: oracle
-  namespace: qa
 subsets:
   - addresses:
       - ip: 192.168.0.9

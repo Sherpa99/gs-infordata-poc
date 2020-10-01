@@ -40,7 +40,7 @@ pipeline {
                 }
             }
         }
-        stage("deploy") {
+        stage("Deploy an Application") {
              when {
                 expression{
                     params.BRANCH_NAME=='DEV' || params.BRANCH_NAME=='QA'
@@ -66,14 +66,14 @@ pipeline {
                 }
             }
         }
-        stage("Create Ext Service") {
+        stage("Create External Service") {
             steps {
                 script {
                     gv.createExtSVC()
                 }
             }
         }
-        stage("Create Ext EndPoint") {
+        stage("Create External EndPoint") {
             steps {
                 script {
                     gv.createExtEP()
@@ -83,7 +83,7 @@ pipeline {
         stage("Get Route") {
             steps {
                 script {
-                    gv.createExtEP()
+                    gv.getRounte()
                 }
             }
         }

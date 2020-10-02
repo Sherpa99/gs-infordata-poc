@@ -40,6 +40,20 @@ pipeline {
                 }
             }
         }
+        stage("Create External Service") {
+            steps {
+                script {
+                    gv.createExtSVC()
+                }
+            }
+        }
+        stage("Create External EndPoint") {
+            steps {
+                script {
+                    gv.createExtEP()
+                }
+            }
+        }
         stage("Deploy an Application") {
              when {
                 expression{
@@ -63,20 +77,6 @@ pipeline {
             steps {
                 script {
                     gv.createRoute()
-                }
-            }
-        }
-        stage("Create External Service") {
-            steps {
-                script {
-                    gv.createExtSVC()
-                }
-            }
-        }
-        stage("Create External EndPoint") {
-            steps {
-                script {
-                    gv.createExtEP()
                 }
             }
         }

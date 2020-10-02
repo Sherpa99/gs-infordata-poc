@@ -54,14 +54,14 @@ def deployApp() {
 }
 def exposeService() {
 	echo 'Exposing Service'
-	sh 'oc apply -f svcapp.yaml'
+	sh 'oc expose deployment infordata-poc'
 }
 def createRoute() {
 	echo 'Create OCP Route - Load Balancer'
-	sh 'oc apply -f routeapp.yaml'
+	sh 'oc expose svc/infordata-poc'
 }
 def createExtSVC() {
-	echo 'Creating OCP Routes - Load Balancer'
+	echo 'Creating DB Service - Load Balancer'
 	sh 'oc apply -f svcoradb.yaml'
 }
 def createExtEP() {

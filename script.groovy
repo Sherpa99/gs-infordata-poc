@@ -47,7 +47,14 @@ def pushToNexus() {
 		error "*** File: ${artifactPath}, could not be found";
 	}
 }
-
+def createExtSVC() {
+	echo 'Create DB Service - Load Balancer'
+	sh 'oc apply -f svcoradb.yaml'
+}
+def createExtEP() {
+	echo 'Create External Endpoint'
+	sh 'oc apply -f eporadb.yaml'
+}
 def deployApp() {
 	echo 'Deploy an application'
 	sh 'oc apply -f deployment.yaml'
@@ -59,14 +66,6 @@ def exposeService() {
 def createRoute() {
 	echo 'Create OCP Route - Load Balancer'
 	sh 'oc apply -f routeapp.yaml'
-}
-def createExtSVC() {
-	echo 'Create DB Service - Load Balancer'
-	sh 'oc apply -f svcoradb.yaml'
-}
-def createExtEP() {
-	echo 'Create External Endpoint'
-	sh 'oc apply -f eporadb.yaml'
 }
 def getRounte() {
 	echo 'Getting Routes for accessing service'

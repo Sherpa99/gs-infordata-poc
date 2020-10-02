@@ -19,7 +19,7 @@ pipeline {
     NEXUS_CREDENTIAL_ID = "nexus-credentials"
     }
     parameters {
-        choice(name: 'BRANCH_NAME', choices:['DEV','QA','PROD'], description:'Select Your Options')
+        choice(name: 'BRANCH_NAME', choices:['DEV','QA','PROD'], description:'Select Your Options for deployent')
         booleanParam(name: 'executeTests', defaultValue: true, description:'Unselect the box to make it false')
     }
     tools{

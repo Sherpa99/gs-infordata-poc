@@ -66,14 +66,14 @@ pipeline {
                 }
             }
         }
-        stage("Create Internal Service") {
+        stage("Create Service") {
             steps {
                 script {
                     gv.exposeService()
                 }
             }
         }
-        stage("create Load Balancer") {
+        stage("create Route") {
             steps {
                 script {
                     gv.createRoute()

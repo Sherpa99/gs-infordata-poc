@@ -80,7 +80,7 @@ subsets:
     ports:
       - port: 1539
 ```
-* Create deployment
+* Create Endpoint
 ```console
 oc apply -f eporadb.yaml
 ```

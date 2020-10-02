@@ -20,7 +20,6 @@
 * ICR Image repository
 * Github
 
-
 ### Oracle Database 
 
 * Oracle JDBC Connection String
@@ -80,6 +79,10 @@ subsets:
       - ip: 192.168.0.9
     ports:
       - port: 1539
+```
+* Create deployment
+```console
+oc apply -f eporadb.yaml
 ```
 4) Deployment yaml
 ```console
@@ -176,13 +179,9 @@ spec:
     targetPort: 8080
   wildcardPolicy: None
 ```
-7) Create application route (Load Balancer)
+* Create application route (Load Balancer)
 ```console
 oc apply -f routeapp.yaml
-```
-* Create deployment
-```console
-oc apply -f eporadb.yaml
 ```
 
 ### REST EndPoints fetching data from a table sample oracle database

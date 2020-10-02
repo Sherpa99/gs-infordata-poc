@@ -36,7 +36,7 @@ spring.jpa.hibernate.ddl-auto=none
 ```
 
 ### YAML Codes for creating K8S different objects:
-Note: Create YAML  files for each object below and name it as described or name of your choice with .yaml or yml extension.
+Note: Create YAML  files for each object below and name it as described or name of your choice with .yaml or yml extension. Each object must be created in sequence as mentioned.
 
 1) DB Secret
 ```console
@@ -54,8 +54,34 @@ data:
 ```console
 oc apply -f oradb-secret.yaml
 ```
-
-2) Deployment yaml
+2) DB External Service
+```console
+kind: Service
+apiVersion: v1
+metadata:
+  name: oracle
+spec:
+  ports:
+    - port: 1521
+      targetPort: 1539
+```
+* Create External Service
+```console
+oc apply -f svcoradb.yaml
+```
+3) DB External Endpoint
+```console
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: oracle
+subsets:
+  - addresses:
+      - ip: 192.168.0.9
+    ports:
+      - port: 1539
+```
+4) Deployment yaml
 ```console
 
 kind: Deployment
@@ -105,7 +131,7 @@ spec:
 ```console
 oc apply -f deployment.yaml
 ```
-3) Service
+5) Service
 ```console
 kind: Service
 apiVersion: v1
@@ -131,7 +157,7 @@ status:
 ```console
 oc apply -f svcapp.yaml
 ```
-4) Route - Load balancer
+6) Route - Load balancer
 ```console
 kind: Route
 apiVersion: route.openshift.io/v1
@@ -150,36 +176,9 @@ spec:
     targetPort: 8080
   wildcardPolicy: None
 ```
-* Create application route (Load Balancer)
+7) Create application route (Load Balancer)
 ```console
 oc apply -f routeapp.yaml
-```
-5) DB External Service
-```console
-kind: Service
-apiVersion: v1
-metadata:
-  name: oracle
-spec:
-  ports:
-    - port: 1521
-      targetPort: 1539
-```
-* Create External Service
-```console
-oc apply -f svcoradb.yaml
-```
-6) DB External Endpoint
-```console
-kind: Endpoints
-apiVersion: v1
-metadata:
-  name: oracle
-subsets:
-  - addresses:
-      - ip: 192.168.0.9
-    ports:
-      - port: 1539
 ```
 * Create deployment
 ```console

@@ -49,7 +49,8 @@ def pushToNexus() {
 }
 def createContainerImage() {
 	echo 'Create Container Image'
-	sh 'docker build de.icr.io/infordata_poc_ir/infordata-gs-poc:1.0.0'
+	dockerImage = docker.build "${REGISTRY}" + ":$BUILD_NUMBER"
+    echo "$dockerImage"
 }
 def UploadImageToICR() {
 	echo 'Create DB Service - Load Balancer'

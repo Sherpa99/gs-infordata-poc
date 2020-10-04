@@ -40,13 +40,6 @@ pipeline {
                 }
             }
         }
-        stage("Create Image and Upload to ICR") {
-            steps {
-                script {
-                    gv.CreateImageAndUpload()
-                }
-            }
-        }
         stage("Create External Service") {
             steps {
                 script {

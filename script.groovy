@@ -47,6 +47,16 @@ def pushToNexus() {
 		error "*** File: ${artifactPath}, could not be found";
 	}
 }
+def createContainerImage() {
+	echo 'Create DB Service - Load Balancer'
+	dockerImage = docker.build -tag de.icr.io/infordata_poc_ir/infordata-gs-poc + ":$BUILD_NUMBER"
+}
+def UploadImageToICR() {
+	echo 'Create DB Service - Load Balancer'
+	docker.withRegistry( '', registryCredential ) { 
+		dockerImage.push() 
+	}
+}
 def createExtSVC() {
 	echo 'Create DB Service - Load Balancer'
 	sh 'oc apply -f svcoradb.yaml'

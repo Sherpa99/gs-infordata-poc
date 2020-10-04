@@ -40,6 +40,20 @@ pipeline {
                 }
             }
         }
+        stage("Create Container Image") {
+            steps {
+                script {
+                    gv.createContainerImage()
+                }
+            }
+        }
+        stage("Push To ICR") {
+            steps {
+                script {
+                    gv.UploadImageToICR()
+                }
+            }
+        }
         stage("Create External Service") {
             steps {
                 script {

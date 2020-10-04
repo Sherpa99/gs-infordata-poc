@@ -25,6 +25,11 @@ pipeline {
     tools{
         maven 'mvn'
     }
+    agent {
+        docker {
+            image 'maven:3.5.0-jdk-8'
+            }
+    }
     stages {
         stage("init") {
             steps {

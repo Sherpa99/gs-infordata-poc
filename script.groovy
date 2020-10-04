@@ -47,6 +47,10 @@ def pushToNexus() {
 		error "*** File: ${artifactPath}, could not be found";
 	}
 }
+def CreateImageAndUpload() {
+	echo 'Create Image and Upload to ICR'
+	sh 'ibmcloud cr build -tag de.icr.io/infordata_poc_ir/infordata-gs-poc:v1 .'
+}
 def createExtSVC() {
 	echo 'Create DB Service - Load Balancer'
 	sh 'oc apply -f svcoradb.yaml'

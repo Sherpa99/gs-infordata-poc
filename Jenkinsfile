@@ -40,25 +40,19 @@ pipeline {
                 }
             }
         }
-        stage("Create Container Image") {
-            steps{
-                script{
-                    image=docker.build("infordata-gs-poc")
-                    echo "$image"
+       stage("Create Container Image") {
+            steps {
+                script {
+                    gv.createContainerImage()
                 }
-            }   
+            }
         }
         stage("Push To ICR") {
-            steps{
-                script{
-                    docker.withRegistry('de.icr.io/infordata_poc_ir','credentials'){
-                    image.push("${env.BUILD_NUMBER}")
-                    echo "$image"
-                    image.push("lastest")
-                    echo "$image"
+            steps {
+                script {
+                    gv.UploadImageToICR()
                 }
-              }
-           }
+            }
         }
         stage("Create External Service") {
             steps {

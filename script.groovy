@@ -49,7 +49,7 @@ def pushToNexus() {
 }
 def createContainerImage() {
 	echo 'Create Container Image'
-	dockerImage = docker.build "${DOCKER_IMAGE}" + ":$BUILD_NUMBER"
+	dockerImage = docker.build "${REGISTRY}" + ":$BUILD_NUMBER"
     echo "$dockerImage"
 }
 def UploadImageToICR() {

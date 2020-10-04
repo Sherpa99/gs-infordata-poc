@@ -3,8 +3,7 @@ pipeline {
     agent any 
     //Environment varialbles
     environment {
-    REGISTRY_URL = "de.icr.io/infordata_poc_ir"
-    DOCKER_IMAGE = "docker.build 'de.icr.io/infordata_poc_ir/infordata-gs-poc"
+    REGISTRY = "de.icr.io/infordata_poc_ir/infordata-gs-poc"
     // This is the git repository from where we fetch the code to build
     GIT_URL= "https://github.com/Sherpa99/gs-infordata-poc.git"
     // This can be nexus3 or nexus2

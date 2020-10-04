@@ -1,4 +1,5 @@
 def gv
+def image
 pipeline {
     agent any 
     //Environment varialbles
@@ -41,16 +42,16 @@ pipeline {
         }
         stage("Create Container Image") {
             steps {
-                script {
-                    gv.createContainerImage()
-                }
+               image=docker.build("infordata-gs-poc") 
+               echo "$image"
             }
         }
         stage("Push To ICR") {
-            steps {
-                script {
-                    gv.UploadImageToICR()
-                }
+            docker.withRegistry('de.icr.io/infordata_poc_ir','credentials'){
+                image.push("${env.BUILD_NUMBER}")
+                echo "$image"
+                image.push("lastest")
+                echo "$image"
             }
         }
         stage("Create External Service") {

@@ -21,11 +21,12 @@ pipeline {
         choice(name: 'BRANCH_NAME', choices:['DEV','QA','UAT','PROD'], description:'Select Your Deployment Option')
         booleanParam(name: 'executeTests', defaultValue: true, description:'Unselect the box to make it false')
     }
-    tools{
-        maven 'mvn'
-    }
     stages {
-        stage("init") {
+        stage('Initialize'){
+        def dockerHome = tool 'docker'
+        def mavenHome  = tool 'mvn'
+        }
+        stage("Load Script") {
             steps {
                 script {
                     gv = load "script.groovy"

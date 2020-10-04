@@ -3,8 +3,8 @@ pipeline {
     agent any 
     //Environment varialbles
     environment {
-    REGISTRY_URL = ""
-    DOCKER_IMAGE = ""
+    REGISTRY_URL = "de.icr.io/infordata_poc_ir"
+    DOCKER_IMAGE = "docker.build 'de.icr.io/infordata_poc_ir/infordata-gs-poc"
     // This is the git repository from where we fetch the code to build
     GIT_URL= "https://github.com/Sherpa99/gs-infordata-poc.git"
     // This can be nexus3 or nexus2
@@ -16,7 +16,7 @@ pipeline {
     // Repository where we will upload the artifact
     NEXUS_REPOSITORY = "nexus-infordata"
     // Jenkins credential id to authenticate to Nexus OSS
-    NEXUS_CREDENTIAL_ID = "nexus-credentials"
+    NEXUS_CREDENTIAL_ID = "nexus-credentials" 
     }
     parameters {
         choice(name: 'BRANCH_NAME', choices:['DEV','QA','UAT','PROD'], description:'Select Your Deployment Option')
